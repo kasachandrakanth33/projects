@@ -1,0 +1,248 @@
+import numpy as np
+import pandas as pd
+import csv
+from datetime import datetime
+import os
+
+#for adding patient deatails
+def add_patient(patient_id,name,age,gender,contact):
+    filename = 'patients.csv'
+    file_exists = os.path.exists(filename)
+    with open('patients.csv', mode='a', newline='\n') as patient_file:
+        writer = csv.writer(patient_file)
+        if not file_exists:
+            writer.writerow(['patient_id','name','age','gender','contact'])
+        writer.writerow([patient_id, name, age, gender, contact])
+
+def generate_patient_id():
+    if 'patient_id' not in generate_patient_id.__dict__:
+        generate_patient_id.patient_id = 1
+    else:
+        generate_patient_id.patient_id =generate_patient_id.patient_id+1
+    return  f'P{generate_patient_id.patient_id:04d}'
+
+# for displying patient details
+def display_patients():
+    with open('patients.csv', mode='r') as patient_file:
+        reader = csv.reader(patient_file)
+        for row in reader:
+            print(row)
+
+def search_patient_by_id(patient_id):
+    filename = 'patients.csv'
+    df = pd.read_csv(filename)
+    result = df[df['patient_id'] == patient_id] # Check if the patient ID exists in the DataFrame
+    if not result.empty:
+        print("Patient Details:")
+        print(result.to_string(index=False))
+    else:
+        print(f"Patient with ID {patient_id} not found.")
+
+def add_doctor(doctor_id,name,specialization,contact,salary):
+    filename='doctors.csv'
+    file_exist = os.path.exists(filename)
+    with open('doctors.csv', mode='a', newline='\n') as doctor_file:
+        writer = csv.writer(doctor_file)
+        if not file_exist:
+            writer.writerow(['doctor_id','name','specialization','contact','salary'])
+        writer.writerow([doctor_id,name,specialization,contact,salary])
+
+def generate_doctor_id():
+    if 'doctor_id' not in generate_doctor_id.__dict__:
+        generate_doctor_id.doctor_id = 1
+    else:
+        generate_doctor_id.doctor_id =generate_doctor_id.doctor_id+ 1
+    return  f'D{generate_doctor_id.doctor_id:04d}'
+
+def display_Doctors():
+    with open('doctors.csv', mode='r') as doctor_file:
+        reader = csv.reader(doctor_file)
+        for row in reader:
+            print(row)
+
+def search_doctor_by_id(doctor_id):
+    filename = 'doctors.csv'
+    df = pd.read_csv(filename)
+    result = df[df['doctor_id'] == doctor_id]# Check if the patient ID exists in the DataFrame
+    if not result.empty:
+        print("doctors Details:")
+        print(result.to_string(index=False))
+    else:
+        print(f"doctors with ID {doctor_id} not found.")
+
+def add_appointment(patient_id,doctor_id,Date):
+    filename='appointments.csv'
+    file_exists=os.path.exists(filename)
+    with open('appointments.csv', mode='a', newline='') as appointments_file:
+        writer = csv.writer(appointments_file)
+        if not file_exists:
+            writer.writerow(['patient_id','doctor_id','Date'])
+        writer.writerow([patient_id,doctor_id,Date])
+
+def display_appointment():
+    with open('appointments.csv', mode='r') as appointments_file:
+        reader = csv.reader(appointments_file)
+        for row in reader:
+            print(row)
+
+def search_for_appointments(patient_id):
+    filename = 'appointments.csv'
+    df = pd.read_csv(filename)
+    result = df[df['patient_id'] == patient_id] # Check if the patient ID exists in the DataFrame
+    if not result.empty:
+        print("appointments Details:")
+        print(result.to_string(index=False))
+    else:
+        print(f"appointments with ID {patient_id} not found.")
+
+def add_employes(emp_id,name,contact,salary,department):
+    filename='employes.csv'
+    file_exist = os.path.exists(filename)
+    with open('employes.csv', mode='a', newline='') as employes_file:
+        writer = csv.writer(employes_file)
+        if not file_exist:
+            writer.writerow(['emp_id','name','contact','salary','department'])
+        writer.writerow([emp_id,name,contact,salary,department])
+
+def generate_emp_id():
+    if 'emp_id' not in generate_emp_id.__dict__:
+        generate_emp_id.emp_id = 1
+    else:
+        generate_emp_id.emp_id =generate_emp_id.emp_id+ 1
+    return  f'E{generate_emp_id.emp_id:04d}'
+
+def display_employes():
+    with open('employes.csv', mode='r') as employes_file:
+        reader = csv.reader(employes_file)
+        for row in reader:
+            print(row)
+
+def search_employee_by_id(emp_id):
+    filename = 'employes.csv'
+    df = pd.read_csv(filename)
+    result = df[df['emp_id'] == emp_id]# Check if the patient ID exists in the DataFrame
+    if not result.empty:
+        print("employes Details:")
+        print(result.to_string(index=False))
+    else:
+        print(f"employes with ID {emp_id} not found.")
+
+def update_file(filename, patient_id, updated_attributes):
+    df = pd.read_csv(filename) # Read the CSV file into a DataFrame
+    row_index = df[df['patient_id'] == patient_id].index[0] # Find the row with the specified patient_id
+    for attribute, new_value in updated_attributes.items():# Update the specified attributes with new values
+        if df[attribute].dtype == 'float64' and not isinstance(new_value, float):# Check if the column's data type is float64 and new_value is not a float
+            df[attribute] = df[attribute].astype(object)  # Change data type to object (string)
+        df.loc[row_index, attribute] = new_value
+    df.to_csv(filename, index=False)# Write the updated DataFrame back to the CSV file
+
+def delete_patient(filename, patient_id):
+    df = pd.read_csv(filename)  # Read the CSV file into a DataFrame
+    row_index = df[df['patient_id'] == patient_id].index # Find the row index with the specified patient_id
+    if not row_index.empty:  # Check if a row with the specified patient_id was found
+        df = df.drop(row_index)# Drop the row with the specified patient_id
+        df.to_csv(filename, index=False)# Write the updated DataFrame back to the CSV file without the deleted row
+        print(f"Patient with ID {patient_id} has been deleted.")
+    else:
+        print(f"Patient with ID {patient_id} not found.")
+
+while True:
+    print("Hospital Management System")
+    print("1. Add Patient")
+    print("2. Add Doctor")
+    print("3. schedule_appointment")
+    print("4. employes")
+    print("5. search details ")
+    print("6. Update details")
+    print("7. Delete details")
+    print("8. Exit")
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        patient_id = generate_patient_id()
+        name = input("Enter Name: ")
+        age = int(input("Enter Age: "))
+        gender = input("Enter Gender: ")
+        contact =int(input("Enter Contact: "))
+
+        add_patient(patient_id,name,age,gender,contact)
+        display_patients()
+
+    elif choice == '2':
+        doctor_id = generate_doctor_id()
+        name = input("Enter Name: ")
+        specialization = input("Enter Specialization: ")
+        contact = input("Enter Contact: ")
+        salary=input("Enter salary: ")
+
+        add_doctor(doctor_id,name,specialization,contact,salary)
+        display_Doctors()
+
+    elif choice == '3':
+        patient_id = input("Enter Patient ID: ")
+        doctor_id = input("Doctor_ID: ")
+        Date= datetime.now()
+
+        add_appointment(patient_id,doctor_id,Date)
+        display_appointment()
+
+    elif choice == '4':
+        emp_id = generate_emp_id()
+        name = input("Enter Name: ")
+        contact = input("Enter Contact: ")
+        salary = input("Enter salary: ")
+        department=input("enter department: ")
+
+        add_employes(emp_id,name,contact,salary,department)
+        display_employes()
+
+    elif choice == '5':
+        while True:
+            print('a.Enter p for patient details')
+            print('b.Enter d  for doctor details' )
+            print('c.Enter e for employe details')
+            print('d.Enter s for appointment details')
+            print('e.enter v for exist')
+            options=input('enter your choice: ')
+
+            if options == 'p':
+                patient_id= input('Enter patient id: ')
+                search_patient_by_id(patient_id)
+            elif options == 'd':
+                doctor_id= input('Enter doctor_id: ')
+                search_doctor_by_id(doctor_id)
+            elif options == 'e':
+                emp_id= input('Enter emp_id: ')
+                search_employee_by_id(emp_id)
+            elif options == 's':
+                patient_id= input('Enter patient_id: ')
+                search_for_appointments(patient_id)
+            elif options == 'v':
+                break
+        continue
+
+    elif choice == '6':
+        if True:
+            filename = 'patients.csv'
+            patient_id = input('Enter patient id: ')
+
+            updated_attributes = {}
+            while True:
+                attribute_name = input('Enter attribute name (or press Enter to finish): ')
+                if not attribute_name:
+                    break
+                attribute_value = input(f'Enter value for {attribute_name}: ')
+                updated_attributes[attribute_name] = attribute_value
+                update_file(filename, patient_id, updated_attributes)
+                print('updated succesfully')
+
+    elif choice == '7':
+        if True:
+            filename = 'patients.csv'
+            patient_id = input('Enter patient id: ')
+
+            delete_patient(filename, patient_id)
+    elif choice == '8':
+        break
+    else:
+        print("Invalid choice. Please try again.")
